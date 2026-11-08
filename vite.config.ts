@@ -9,7 +9,7 @@ export default defineConfig({
             '@': '/src',
         },
     },
-    base: './',
+    base: '/',
     server: {
         port: 5173,
         host: true,

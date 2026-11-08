@@ -52,3 +52,213 @@
 .actions button {
     min-width: 100px;
 }
+
+.paymentMethodGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.label {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+}
+
+.radioGroup {
+    display: flex;
+    gap: var(--space-lg);
+}
+
+.radioLabel {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
+}
+
+.radio {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+}
+
+.positionsBuilderGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.positionInputRow {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    background: var(--color-background-light);
+    padding: var(--space-sm);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-border);
+}
+
+.positionInputFields {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: flex-end;
+}
+
+.positionInputFields>div {
+    flex: 1;
+}
+
+.countInputContainer {
+    display: flex;
+    flex-direction: column;
+    min-width: 100px;
+}
+
+.countInputLabel {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--space-xs);
+    color: var(--color-text-primary);
+}
+
+.countInputWrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-background-primary);
+    overflow: hidden;
+    height: 48px;
+    /* Match Input height */
+}
+
+.countButton {
+    background: var(--color-background-light);
+    border: none;
+    width: 36px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: var(--font-size-lg);
+    color: var(--color-text-primary);
+    transition: background var(--transition-fast);
+}
+
+.countButton:hover {
+    background: var(--glass-border);
+}
+
+.countDisplay {
+    flex: 1;
+    text-align: center;
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-medium);
+}
+
+.addPositionButton {
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    width: 48px;
+    height: 48px;
+    font-size: var(--font-size-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.addPositionButton:hover:not(:disabled) {
+    background: var(--color-primary-dark);
+}
+
+.addPositionButton:disabled {
+    background: var(--color-border);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.positionTagsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-top: var(--space-xs);
+}
+
+.positionTag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 4px 8px;
+    background: var(--color-background-light);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+}
+
+.removeTagButton {
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-lg);
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin-left: 2px;
+}
+
+.removeTagButton:hover {
+    color: var(--color-error);
+}
+
+.selectContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    width: 100%;
+}
+
+.select {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    padding-right: 2.5rem;
+    background-color: var(--glass-background);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-base);
+    height: 48px;
+    transition: all var(--transition-fast);
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    backdrop-filter: blur(var(--glass-blur));
+}
+
+.select option {
+    background-color: var(--color-background-light);
+    color: var(--color-text-primary);
+}
+
+.select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}

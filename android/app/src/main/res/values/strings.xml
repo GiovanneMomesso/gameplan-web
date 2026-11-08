@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Gameplan</string>
+    <string name="title_activity_main">Gameplan</string>
+    <string name="package_name">com.giovanne.gameplan</string>
+    <string name="custom_url_scheme">com.giovanne.gameplan</string>
+</resources>

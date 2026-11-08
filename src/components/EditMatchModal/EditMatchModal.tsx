@@ -1,10 +1,11 @@
 import React, { useState, FormEvent, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { MatchSummary, useUpdateMatch, groupKeys } from '../../api';
+import { MatchSummary, useUpdateMatch, groupKeys, useSportPositions } from '../../api';
 import Modal from '../Modal/Modal';
 import Input from '../Input/Input';
 import Button from '../Button/Button';
 import { toISOString } from '../../utils/dateFormatter';
+import { displayPosition } from '../../utils/positionUtils';
 import styles from './EditMatchModal.module.css';
 
 interface EditMatchModalProps {
@@ -20,10 +21,34 @@ const EditMatchModal: React.FC<EditMatchModalProps> = ({ isOpen, onClose, match,
     const [dateTime, setDateTime] = useState('');
     const [price, setPrice] = useState('');
     const [enablePositions, setEnablePositions] = useState(false);
+    const [requestPrePayment, setRequestPrePayment] = useState(false);
+    const [paymentType, setPaymentType] = useState('MBWAY');
+    const [iban, setIban] = useState('');
+    const [mbwayPhoneNumber, setMbwayPhoneNumber] = useState('');
+    const [sportType, setSportType] = useState<'VOLLEYBALL' | 'BASKETBALL' | null>(null);
+    const [availablePositionsList, setAvailablePositionsList] = useState<{ name: string, count: number }[]>([]);
+    const [currentPositionInput, setCurrentPositionInput] = useState('');
+    const [currentCountInput, setCurrentCountInput] = useState<number>(1);
     const [error, setError] = useState('');
 
     const queryClient = useQueryClient();
     const updateMatch = useUpdateMatch();
+
+    const { data: positions } = useSportPositions(sportType || '');
+    const hasPositions = positions && positions.length > 0;
+
+    const unselectedPositions = positions?.filter(
+        pos => !availablePositionsList.some(p => p.name.toLowerCase() === pos.toLowerCase())
+    ) || [];
+
+    // Unset currentPositionInput if sportType changes or position is already added
+    useEffect(() => {
+        if (hasPositions && currentPositionInput && !unselectedPositions.includes(currentPositionInput)) {
+            setCurrentPositionInput(unselectedPositions[0] || '');
+        } else if (hasPositions && !currentPositionInput) {
+            setCurrentPositionInput(unselectedPositions[0] || '');
+        }
+    }, [sportType, positions, hasPositions, currentPositionInput, availablePositionsList]);
 
     // Pre-fill form with match data
     useEffect(() => {
@@ -32,6 +57,18 @@ const EditMatchModal: React.FC<EditMatchModalProps> = ({ isOpen, onClose, match,
             setAddress(match.address || '');
             setPrice(match.pricePerMember.toString());
             setEnablePositions(!!match.enablePositions);
+            setRequestPrePayment(!!match.requestPrePayment);
+            setPaymentType(match.paymentType || 'MBWAY');
+            setIban(match.iban || '');
+            setMbwayPhoneNumber(match.mbwayPhoneNumber || '');
+            setSportType(match.sportType || null);
+
+            const initPos = match.availablePositions
+                ? Object.entries(match.availablePositions).map(([name, count]) => ({ name, count }))
+                : [];
+            setAvailablePositionsList(initPos);
+            setCurrentPositionInput('');
+            setCurrentCountInput(1);
 
             // Convert ISO string to datetime-local format
             const date = new Date(match.time);
@@ -46,11 +83,37 @@ const EditMatchModal: React.FC<EditMatchModalProps> = ({ isOpen, onClose, match,
         e.preventDefault();
         setError('');
 
+        // If user typed something but didn't click add, auto-add it if valid
+        let finalPositions = [...availablePositionsList];
+        if (enablePositions) {
+            const trimmedPos = currentPositionInput.trim();
+            if (trimmedPos && !finalPositions.some(p => p.name.toLowerCase() === trimmedPos.toLowerCase()) && currentCountInput > 0) {
+                finalPositions.push({ name: trimmedPos, count: currentCountInput });
+            }
+        }
+
         const priceNum = parseFloat(price);
+
+        const availablePositionsObj = enablePositions ? finalPositions.reduce((acc, curr) => {
+            acc[curr.name] = curr.count;
+            return acc;
+        }, {} as Record<string, number>) : {};
 
         if (isNaN(priceNum) || priceNum < 0) {
             setError('Price must be a valid number');
             return;
+        }
+
+        // Validate payment fields if pre-payment is requested
+        if (requestPrePayment) {
+            if (paymentType === 'IBAN' && !iban.trim()) {
+                setError('IBAN is required when requesting pre-payment via IBAN');
+                return;
+            }
+            if (paymentType === 'MBWAY' && !mbwayPhoneNumber.trim()) {
+                setError('MBWay phone number is required when requesting pre-payment via MBWay');
+                return;
+            }
         }
 
         try {
@@ -62,7 +125,15 @@ const EditMatchModal: React.FC<EditMatchModalProps> = ({ isOpen, onClose, match,
                     address: address.trim(),
                     pricePerMember: priceNum,
                     time: toISOString(time),
+                    sportType,
+                    availablePositions: availablePositionsObj,
                     enablePositions,
+                    requestPrePayment,
+                    ...(requestPrePayment && {
+                        paymentType,
+                        ...(paymentType === 'IBAN' && { iban: iban.trim() }),
+                        ...(paymentType === 'MBWAY' && { mbwayPhoneNumber: mbwayPhoneNumber.trim() }),
+                    }),
                 },
             });
 
@@ -76,6 +147,26 @@ const EditMatchModal: React.FC<EditMatchModalProps> = ({ isOpen, onClose, match,
     const handleClose = () => {
         setError('');
         onClose();
+    };
+
+    const handleAddPosition = () => {
+        const trimmed = currentPositionInput.trim();
+        if (trimmed && !availablePositionsList.some(p => p.name.toLowerCase() === trimmed.toLowerCase()) && currentCountInput > 0) {
+            setAvailablePositionsList([...availablePositionsList, { name: trimmed, count: currentCountInput }]);
+            setCurrentPositionInput('');
+            setCurrentCountInput(1);
+        }
+    };
+
+    const handleRemovePosition = (indexToRemove: number) => {
+        setAvailablePositionsList(availablePositionsList.filter((_, idx) => idx !== indexToRemove));
+    };
+
+    const handlePositionKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Prevent form submission
+            handleAddPosition();
+        }
     };
 
     return (
@@ -117,6 +208,42 @@ const EditMatchModal: React.FC<EditMatchModalProps> = ({ isOpen, onClose, match,
                     required
                 />
 
+                <div className={styles.paymentMethodGroup}>
+                    <label className={styles.label}>Sport Type</label>
+                    <div className={styles.radioGroup}>
+                        <label className={styles.radioLabel}>
+                            <input
+                                type="radio"
+                                name="sportType"
+                                checked={sportType === null}
+                                onChange={() => setSportType(null)}
+                                className={styles.radio}
+                            />
+                            Unspecified
+                        </label>
+                        <label className={styles.radioLabel}>
+                            <input
+                                type="radio"
+                                name="sportType"
+                                checked={sportType === 'VOLLEYBALL'}
+                                onChange={() => setSportType('VOLLEYBALL')}
+                                className={styles.radio}
+                            />
+                            Volleyball
+                        </label>
+                        <label className={styles.radioLabel}>
+                            <input
+                                type="radio"
+                                name="sportType"
+                                checked={sportType === 'BASKETBALL'}
+                                onChange={() => setSportType('BASKETBALL')}
+                                className={styles.radio}
+                            />
+                            Basketball
+                        </label>
+                    </div>
+                </div>
+
                 <div className={styles.checkboxGroup}>
                     <label className={styles.checkboxLabel}>
                         <input
@@ -131,6 +258,160 @@ const EditMatchModal: React.FC<EditMatchModalProps> = ({ isOpen, onClose, match,
                         Allow players to select their preferred position when joining
                     </span>
                 </div>
+
+                {enablePositions && (
+                    <div className={styles.positionsBuilderGroup}>
+                        <div className={styles.positionInputRow}>
+                            <div className={styles.positionInputFields}>
+                                <div style={{ flex: 1 }}>
+                                    {(() => {
+                                        return hasPositions ? (
+                                            <div className={styles.selectContainer}>
+                                                <label className={styles.label}>Positions Needed</label>
+                                                <select
+                                                    value={currentPositionInput}
+                                                    onChange={(e) => setCurrentPositionInput(e.target.value)}
+                                                    className={styles.select}
+                                                    disabled={unselectedPositions.length === 0}
+                                                >
+                                                    {unselectedPositions.length === 0 && (
+                                                        <option value="">All positions added</option>
+                                                    )}
+                                                    {unselectedPositions.map(pos => (
+                                                        <option key={pos} value={pos}>{displayPosition(pos)}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        ) : (
+                                            <Input
+                                                label="Positions Needed"
+                                                type="text"
+                                                placeholder="e.g., Setter, Middle Blocker"
+                                                value={currentPositionInput}
+                                                onChange={(e) => setCurrentPositionInput(e.target.value)}
+                                                onKeyDown={handlePositionKeyDown}
+                                            />
+                                        );
+                                    })()}
+                                </div>
+                                <div className={styles.countInputContainer}>
+                                    <label className={styles.countInputLabel}>Count</label>
+                                    <div className={styles.countInputWrapper}>
+                                        <button
+                                            type="button"
+                                            className={styles.countButton}
+                                            onClick={() => setCurrentCountInput(Math.max(1, currentCountInput - 1))}
+                                        >
+                                            -
+                                        </button>
+                                        <span className={styles.countDisplay}>{currentCountInput}</span>
+                                        <button
+                                            type="button"
+                                            className={styles.countButton}
+                                            onClick={() => setCurrentCountInput(currentCountInput + 1)}
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    className={styles.addPositionButton}
+                                    onClick={handleAddPosition}
+                                    disabled={!currentPositionInput.trim() || currentCountInput <= 0}
+                                    title="Add Position Constraint"
+                                >
+                                    ✓
+                                </button>
+                            </div>
+                        </div>
+                        {availablePositionsList.length > 0 && (
+                            <div className={styles.positionTagsList}>
+                                {availablePositionsList.map((position, idx) => (
+                                    <span key={idx} className={styles.positionTag}>
+                                        {displayPosition(position.name)} <span style={{ opacity: 0.8, fontWeight: 'bold', marginLeft: 4 }}>x{position.count}</span>
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRemovePosition(idx)}
+                                            className={styles.removeTagButton}
+                                        >
+                                            ×
+                                        </button>
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                <div className={styles.checkboxGroup}>
+                    <label className={styles.checkboxLabel}>
+                        <input
+                            type="checkbox"
+                            className={styles.checkbox}
+                            checked={requestPrePayment}
+                            onChange={(e) => setRequestPrePayment(e.target.checked)}
+                        />
+                        Request Pre-payment
+                    </label>
+                    <span className={styles.checkboxHint}>
+                        Display a badge on the match card to indicate pre-payment is required
+                    </span>
+                </div>
+
+                {requestPrePayment && (
+                    <>
+                        <div className={styles.paymentMethodGroup}>
+                            <label className={styles.label}>Payment Method</label>
+                            <div className={styles.radioGroup}>
+                                <label className={styles.radioLabel}>
+                                    <input
+                                        type="radio"
+                                        name="paymentType"
+                                        value="MBWAY"
+                                        checked={paymentType === 'MBWAY'}
+                                        onChange={(e) => setPaymentType(e.target.value)}
+                                        className={styles.radio}
+                                    />
+                                    MBWay
+                                </label>
+                                <label className={styles.radioLabel}>
+                                    <input
+                                        type="radio"
+                                        name="paymentType"
+                                        value="IBAN"
+                                        checked={paymentType === 'IBAN'}
+                                        onChange={(e) => setPaymentType(e.target.value)}
+                                        className={styles.radio}
+                                    />
+                                    IBAN
+                                </label>
+                            </div>
+                        </div>
+
+                        {paymentType === 'MBWAY' && (
+                            <Input
+                                label="MBWay Phone Number"
+                                type="tel"
+                                placeholder="e.g., +351 912 345 678"
+                                value={mbwayPhoneNumber}
+                                onChange={(e) => setMbwayPhoneNumber(e.target.value)}
+                                required
+                            />
+                        )}
+
+                        {paymentType === 'IBAN' && (
+                            <Input
+                                label="IBAN"
+                                type="text"
+                                placeholder="e.g., PT50 0002 0123 1234 5678 9015 4"
+                                value={iban}
+                                onChange={(e) => setIban(e.target.value)}
+                                required
+                            />
+                        )}
+                    </>
+                )}
 
                 {error && <p className={styles.error}>{error}</p>}
 

@@ -5,7 +5,7 @@
 
 import { useMutation, UseMutationResult, useQuery } from '@tanstack/react-query';
 import { userService } from '../services';
-import { UserCreateRequest, UserResponse } from '../models';
+import { UserCreateRequest, UserResponse, UserUpdateRequest } from '../models';
 import { ApiError } from '../utils/errorHandler';
 
 /**
@@ -30,5 +30,18 @@ export const useCurrentUser = (enabled: boolean = true) => {
         queryFn: () => userService.getMe(),
         retry: false,
         enabled,
+    });
+};
+
+/**
+ * Hook for updating current user
+ */
+export const useUpdateUser = (): UseMutationResult<
+    { id: number; name: string },
+    ApiError,
+    UserUpdateRequest
+> => {
+    return useMutation({
+        mutationFn: (data: UserUpdateRequest) => userService.updateMe(data),
     });
 };

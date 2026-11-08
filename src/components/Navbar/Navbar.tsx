@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCurrentUser } from '../../api';
 import Button from '../Button/Button';
+import EditProfileModal from '../EditProfileModal/EditProfileModal';
 import styles from './Navbar.module.css';
 
 const Navbar: React.FC = () => {
@@ -10,6 +11,8 @@ const Navbar: React.FC = () => {
     const navigate = useNavigate();
     const { data: user } = useCurrentUser(isAuthenticated);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+    const menuRef = useRef<HTMLDivElement>(null);
 
     const handleLogout = () => {
         logout();
@@ -22,6 +25,33 @@ const Navbar: React.FC = () => {
         setIsMenuOpen(false);
     };
 
+    const handleEditProfile = () => {
+        setIsEditProfileOpen(true);
+        setIsMenuOpen(false);
+    };
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (isMenuOpen) {
+                setIsMenuOpen(false);
+            }
+        };
+
+        const handleClickOutside = (event: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setIsMenuOpen(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isMenuOpen]);
+
     return (
         <nav className={styles.navbar}>
             <div className={styles.container}>
@@ -31,7 +61,7 @@ const Navbar: React.FC = () => {
                 </Link>
 
                 {isAuthenticated && (
-                    <div className={styles.actions}>
+                    <div className={styles.actions} ref={menuRef}>
                         {user && <span className={styles.userName}>{user.name}</span>}
                         <button
                             className={styles.hamburger}
@@ -51,6 +81,13 @@ const Navbar: React.FC = () => {
                                 🏠 My Groups
                             </button>
 
+                            <button
+                                className={styles.menuItem}
+                                onClick={handleEditProfile}
+                            >
+                                ✏️ Edit Profile
+                            </button>
+
                             <div className={styles.menuDivider}></div>
                             <Button variant="secondary" onClick={handleLogout} className={styles.logoutButton}>
                                 Logout
@@ -59,6 +96,11 @@ const Navbar: React.FC = () => {
                     </div>
                 )}
             </div>
+
+            <EditProfileModal
+                isOpen={isEditProfileOpen}
+                onClose={() => setIsEditProfileOpen(false)}
+            />
         </nav>
     );
 };

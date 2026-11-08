@@ -120,3 +120,16 @@ export const useGroupMembers = (
         enabled: !!groupId, // Only fetch if groupId is provided
     });
 };
+
+/**
+ * Hook for removing a member from a group
+ */
+export const useRemoveMember = (): UseMutationResult<
+    void,
+    ApiError,
+    { groupId: number; userId: number }
+> => {
+    return useMutation({
+        mutationFn: ({ groupId, userId }) => groupService.removeMember(groupId, userId),
+    });
+};

@@ -45,11 +45,11 @@ apiClient.interceptors.response.use(
     (error: AxiosError) => {
         const apiError = createApiError(error);
 
-        // Handle 401 Unauthorized - token expired or invalid
-        if (error.response?.status === 401) {
+        // Handle 401 Unauthorized or 403 Forbidden - redirect to login
+        if (error.response?.status === 401 || error.response?.status === 403) {
             tokenStorage.removeToken();
-            // You can dispatch a logout action here if using Redux/Context
-            // or redirect to login page
+            // Redirect to login page
+            window.location.href = '/login';
         }
 
         return Promise.reject(apiError);

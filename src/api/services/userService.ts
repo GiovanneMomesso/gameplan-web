@@ -4,7 +4,7 @@
  */
 
 import apiClient from '../apiClient';
-import { UserCreateRequest, UserResponse } from '../models';
+import { UserCreateRequest, UserResponse, UserUpdateRequest } from '../models';
 
 export const userService = {
     /**
@@ -23,6 +23,16 @@ export const userService = {
      */
     getMe: async (): Promise<{ id: number; name: string }> => {
         const response = await apiClient.get<{ id: number; name: string }>('/api/users/me');
+        return response.data;
+    },
+
+    /**
+     * Update current logged in user
+     * @param data User update data
+     * @returns Updated user summary
+     */
+    updateMe: async (data: UserUpdateRequest): Promise<{ id: number; name: string }> => {
+        const response = await apiClient.put<{ id: number; name: string }>('/api/users/me', data);
         return response.data;
     },
 };

@@ -50,8 +50,17 @@
     margin-bottom: var(--space-sm);
 }
 
+.linkContainer {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: stretch;
+    margin-bottom: var(--space-sm);
+}
+
 .secretCode {
-    display: block;
+    flex: 1;
+    display: flex;
+    align-items: center;
     padding: var(--space-sm);
     background: var(--color-background-light);
     border-radius: var(--radius-sm);
@@ -59,7 +68,23 @@
     font-size: var(--font-size-sm);
     color: var(--color-text-primary);
     word-break: break-all;
-    margin-bottom: var(--space-sm);
+    margin: 0;
+}
+
+.copyButton {
+    min-width: auto;
+    padding: var(--space-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-secondary);
+    background: transparent;
+    border: none;
+}
+
+.copyButton:hover {
+    color: var(--color-primary);
+    background: transparent;
 }
 
 .secretHint {

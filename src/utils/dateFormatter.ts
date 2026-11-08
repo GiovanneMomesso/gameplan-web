@@ -21,6 +21,7 @@ export const formatDateTime = (isoString: string | null | undefined): string => 
 
     const date = new Date(isoString!);
     return date.toLocaleString('en-US', {
+        weekday: 'short',
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -67,3 +68,25 @@ export const toISOString = (date: Date): string => {
     return date.toISOString();
 };
 
+/**
+ * Get days remaining relative to current date
+ * Returns a formatted string (e.g. "(in 5 days)") or null if passed
+ */
+export const getDaysRemaining = (isoString: string | null | undefined): string | null => {
+    if (!isValidDate(isoString)) return null;
+
+    const matchDate = new Date(isoString!);
+    const now = new Date();
+
+    // Reset hours to compare dates only for day calculation
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const target = new Date(matchDate.getFullYear(), matchDate.getMonth(), matchDate.getDate());
+
+    const diffTime = target.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) return null;
+    if (diffDays === 0) return '(Today)';
+    if (diffDays === 1) return '(Tomorrow)';
+    return `(in ${diffDays} days)`;
+};

@@ -6,3 +6,4 @@ export * from './authService';
 export * from './userService';
 export * from './matchService';
 export * from './groupService';
+export * from './sportService';

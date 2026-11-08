@@ -69,10 +69,6 @@
     animation: fadeIn var(--transition-base);
 }
 
-.inviteSection {
-    /* Sticky positioning moved to sidePanel if needed, or left static */
-}
-
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -148,10 +144,51 @@
     border: 1px solid var(--color-border);
     font-weight: 500;
     color: var(--color-text-primary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+.memberItem:hover {
+    background-color: var(--color-surface);
+}
+
+.memberName {
+    flex: 1;
+}
+
+.removeButton {
+    background: transparent;
+    border: none;
+    color: var(--color-error, #ef4444);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    opacity: 0.6;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+    line-height: 1;
+}
+
+.removeButton:hover {
+    opacity: 1;
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+.removeButton:active {
+    transform: scale(0.95);
 }
 
 .emptyText {
     color: var(--color-text-secondary);
     font-style: italic;
     margin-top: 0.5rem;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-sm);
+    margin-top: var(--space-lg);
 }

@@ -1,4 +1,5 @@
 .matchCard {
+    position: relative;
     transition: all var(--transition-base);
 }
 
@@ -65,21 +66,122 @@
     color: var(--color-primary-light);
 }
 
+.availablePositionsContainer {
+    margin-bottom: var(--space-md);
+    background: var(--glass-background);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm);
+}
+
+.availablePositionsLabel {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--space-xs) 0;
+}
+
+.availablePositionsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+}
+
+.positionBadge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    background: rgba(59, 130, 246, 0.1); /* light blue bg */
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-primary); /* Assuming primary is a reasonable blue/theme color */
+}
+
 .participants {
     margin-bottom: var(--space-lg);
+}
+
+
+.participantsHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-sm);
 }
 
 .participantsLabel {
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-medium);
     color: var(--color-text-secondary);
-    margin-bottom: var(--space-sm);
+    margin: 0;
+}
+
+.participantsSubStats {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-normal);
+    margin-left: var(--space-xs);
+}
+
+.daysRemaining {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-normal);
+}
+
+.paymentInfo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-top: var(--space-xs);
+    font-size: var(--font-size-sm);
+}
+
+.paymentIcon {
+    font-size: var(--font-size-md);
+    line-height: 1;
+}
+
+.paymentLabel {
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-medium);
+}
+
+.paymentValue {
+    color: var(--color-text-primary);
+    font-family: monospace;
+    font-size: var(--font-size-sm);
+}
+
+.error {
+    color: var(--color-error);
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-sm);
+}
+
+.addGuestButton {
+    background: transparent;
+    border: none;
+    color: var(--color-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.addGuestButton:hover {
+    background: var(--glass-border);
 }
 
 .participantsList {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: var(--space-sm);
+    align-items: flex-start;
 }
 
 .participant {
@@ -91,10 +193,51 @@
     border-radius: var(--radius-full);
     font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
+    gap: 0.25rem;
+    transition: all var(--transition-fast);
+}
+
+.participantPending {
+    border-left: 3px solid #f0ad4e;
+    background: linear-gradient(90deg, rgba(255, 193, 7, 0.08) 0%, var(--glass-background) 15%);
+}
+
+.participantApproved {
+    border-left: 3px solid #28a745;
+    background: linear-gradient(90deg, rgba(40, 167, 69, 0.08) 0%, var(--glass-background) 15%);
+}
+
+.participantRefused {
+    border-left: 3px solid #dc3545;
+    background: linear-gradient(90deg, rgba(220, 53, 69, 0.08) 0%, var(--glass-background) 15%);
+}
+
+.removeParticipantButton {
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 2px;
+    margin-left: var(--space-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all var(--transition-fast);
+    line-height: 0;
+}
+
+.removeParticipantButton:hover {
+    color: var(--color-error);
+    background: rgba(239, 68, 68, 0.1);
 }
 
 .participantName {
     color: var(--color-text-primary);
+    max-width: 20ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .participantPosition {
@@ -102,6 +245,99 @@
     font-weight: var(--font-weight-medium);
     margin-left: var(--space-xs);
     opacity: 0.9;
+    max-width: 20ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.participantActions {
+    display: flex;
+    align-items: center;
+    margin-left: var(--space-xs);
+    gap: var(--space-xs);
+}
+
+.iconButton {
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: 2px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all var(--transition-fast);
+    line-height: 0;
+    font-size: 14px;
+    position: relative;
+    /* For tooltip positioning */
+}
+
+.tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-background-light);
+    color: var(--color-success);
+    border: 1px solid var(--glass-border);
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    animation: fadeIn 0.2s forwards;
+    margin-bottom: 8px;
+    box-shadow: var(--shadow-md);
+    z-index: 10;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+.iconButton:hover {
+    color: var(--color-primary);
+    background: var(--glass-border);
+}
+
+.iconButtonDanger:hover {
+    color: var(--color-error);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.iconButtonApprove:hover {
+    color: var(--color-success);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.iconButtonReject:hover {
+    color: var(--color-error);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.inviteButtonLeft {
+    margin-right: var(--space-xs);
+}
+
+.copiedLabel {
+    color: var(--color-success);
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .actions {
@@ -219,4 +455,75 @@
     justify-content: flex-end;
     gap: var(--space-sm);
     margin-top: var(--space-lg);
+}
+
+.prePaymentBadge {
+    display: inline-block;
+    margin-top: var(--space-xs);
+    margin-bottom: var(--space-xs);
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-full);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    animation: badgeSlideIn 0.3s ease-out;
+}
+
+@keyframes badgeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.positionsGrid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.positionGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    background: rgba(0, 0, 0, 0.02); /* slightly visible group bg */
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm);
+}
+
+.positionGroupName {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-xs) 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-xs);
+}
+
+.positionNeededCount {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-primary);
+    background: rgba(59, 130, 246, 0.1);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+}
+
+.emptyPositionText {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    font-style: italic;
+    margin: 0;
+    padding: var(--space-xs) 0;
 }

@@ -9,6 +9,7 @@ import Join from './pages/Join/Join';
 import Dashboard from './pages/Dashboard/Dashboard';
 import GroupDetail from './pages/GroupDetail/GroupDetail';
 import AcceptInvite from './pages/AcceptInvite/AcceptInvite';
+import MatchTeams from './pages/MatchTeams/MatchTeams';
 
 // Create React Query client
 const queryClient = new QueryClient({
@@ -46,6 +47,14 @@ const App: React.FC = () => {
                             element={
                                 <ProtectedRoute>
                                     <GroupDetail />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/groups/:id/matches/:matchId/teams"
+                            element={
+                                <ProtectedRoute>
+                                    <MatchTeams />
                                 </ProtectedRoute>
                             }
                         />

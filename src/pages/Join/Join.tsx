@@ -30,7 +30,12 @@ const Join: React.FC = () => {
                 // Determine existing redirect or current full URL
                 // We want to redirect back to /join?hash=...
                 const currentPath = location.pathname + location.search;
-                navigate('/login', { state: { from: currentPath } });
+                navigate('/register', { state: { from: currentPath } });
+                return;
+            }
+
+            // Prevent retry loop
+            if (submitInvite.status !== 'idle') {
                 return;
             }
 

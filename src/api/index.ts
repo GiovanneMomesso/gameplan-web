@@ -11,6 +11,7 @@ export * from './config';
 
 // Export models
 export * from './models';
+export { ParticipantStatus } from './models/user';
 
 // Export services
 export * from './services';

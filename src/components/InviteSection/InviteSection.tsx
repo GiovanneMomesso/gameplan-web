@@ -13,6 +13,7 @@ interface InviteSectionProps {
 const InviteSection: React.FC<InviteSectionProps> = ({ groupId }) => {
     const [inviteLink, setInviteLink] = useState('');
     const [error, setError] = useState('');
+    const [copied, setCopied] = useState(false);
 
     const queryClient = useQueryClient();
     const createInvite = useCreateInvite();
@@ -20,6 +21,7 @@ const InviteSection: React.FC<InviteSectionProps> = ({ groupId }) => {
     const handleGenerateLink = async () => {
         setError('');
         setInviteLink('');
+        setCopied(false);
 
         try {
             const response = await createInvite.mutateAsync({
@@ -32,6 +34,16 @@ const InviteSection: React.FC<InviteSectionProps> = ({ groupId }) => {
             queryClient.invalidateQueries({ queryKey: groupKeys.invites(groupId) });
         } catch (err: any) {
             setError(err?.message || 'Failed to create public link');
+        }
+    };
+
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(inviteLink);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch (err) {
+            console.error('Failed to copy!', err);
         }
     };
 
@@ -57,7 +69,27 @@ const InviteSection: React.FC<InviteSectionProps> = ({ groupId }) => {
                 {inviteLink && (
                     <div className={styles.secretHash}>
                         <p className={styles.secretLabel}>Invite Link:</p>
-                        <code className={styles.secretCode}>{inviteLink}</code>
+                        <div className={styles.linkContainer}>
+                            <code className={styles.secretCode}>{inviteLink}</code>
+                            <Button
+                                onClick={handleCopy}
+                                variant="secondary"
+                                className={styles.copyButton}
+                                disabled={copied}
+                                title={copied ? "Copied!" : "Copy to clipboard"}
+                            >
+                                {copied ? (
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                )}
+                            </Button>
+                        </div>
                         <p className={styles.secretHint}>Share this link with anyone you want to invite</p>
                     </div>
                 )}

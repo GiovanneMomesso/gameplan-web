@@ -97,4 +97,14 @@ export const groupService = {
         );
         return response.data;
     },
+
+    /**
+     * Remove a member from a group
+     * @param groupId Group ID
+     * @param userId User ID to remove
+     * @returns Promise that resolves when member is removed
+     */
+    removeMember: async (groupId: number, userId: number): Promise<void> => {
+        await apiClient.delete(`/api/groups/${groupId}/members/${userId}`);
+    },
 };

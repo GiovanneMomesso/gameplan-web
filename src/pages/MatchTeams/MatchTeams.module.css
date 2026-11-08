@@ -1,0 +1,157 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.loading, .error {
+    text-align: center;
+    padding: 4rem;
+}
+
+.error {
+    color: #dc3545;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-size: 1.5rem;
+    color: var(--color-text-primary);
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.sectionTitle {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.description {
+    color: var(--color-text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.tableContainer {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.table th {
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    background-color: var(--color-surface);
+}
+
+.input, .select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background-color: var(--color-background-light);
+    color: var(--color-text-primary);
+}
+
+.input:focus, .select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.teamsHeaderContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.copyTeamsBtn {
+    display: flex !important;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--color-success) !important;
+    color: white !important;
+    border: none;
+    transition: opacity 0.2s ease;
+}
+
+.copyTeamsBtn:hover {
+    opacity: 0.9;
+}
+
+.teamsHeader {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.teamsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.teamCard {
+    padding: 1.5rem;
+}
+
+.teamName {
+    font-size: 1.1rem;
+    color: var(--color-text-primary);
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-border);
+    margin-bottom: 1rem;
+}
+
+.teamMembers {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.teamMember {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--color-border-light);
+    gap: 1rem;
+}
+
+.teamMember:last-child {
+    border-bottom: none;
+}
+
+.memberName {
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+.memberPosition {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
